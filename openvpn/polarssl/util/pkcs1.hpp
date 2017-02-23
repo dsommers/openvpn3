@@ -19,24 +19,53 @@
 //    along with this program in the COPYING file.
 //    If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef OPENVPN_PKI_EPKIBASE_H
-#define OPENVPN_PKI_EPKIBASE_H
+#ifndef OPENVPN_POLARSSL_UTIL_PKCS1_H
+#define OPENVPN_POLARSSL_UTIL_PKCS1_H
 
-#include <string>
+#include <openvpn/pki/pkcs1.hpp>
 
 namespace openvpn {
+  namespace PKCS1 {
+    namespace DigestPrefix {
+      class PolarSSLParse : public Parse<mbedtls_md_type_t>
+      {
+      public:
+	PolarSSLParse()
+	  : Parse(MBEDTLS_MD_NONE,
+		  MBEDTLS_MD_MD2,
+		  MBEDTLS_MD_MD5,
+		  MBEDTLS_MD_SHA1,
+		  MBEDTLS_MD_SHA256,
+		  MBEDTLS_MD_SHA384,
+		  MBEDTLS_MD_SHA512)
+	{
+	}
 
-  // Abstract base class used to provide an interface where core SSL implementation
-  // can use an external private key.
-  class ExternalPKIBase
-  {
-  public:
-    // Sign data (base64) and return signature as sig (base64).
-    // Return true on success or false on error.
-    virtual bool sign(const std::string& data, std::string& sig) = 0;
-
-    virtual ~ExternalPKIBase() {}
-  };
+	static const char *to_string(const mbedtls_md_type_t t)
+	{
+	  switch (t)
+	    {
+	    case MBEDTLS_MD_NONE:
+	      return "MBEDTLS_MD_NONE";
+	    case MBEDTLS_MD_MD2:
+	      return "MBEDTLS_MD_MD2";
+	    case MBEDTLS_MD_MD5:
+	      return "MBEDTLS_MD_MD5";
+	    case MBEDTLS_MD_SHA1:
+	      return "MBEDTLS_MD_SHA1";
+	    case MBEDTLS_MD_SHA256:
+	      return "MBEDTLS_MD_SHA256";
+	    case MBEDTLS_MD_SHA384:
+	      return "MBEDTLS_MD_SHA384";
+	    case MBEDTLS_MD_SHA512:
+	      return "MBEDTLS_MD_SHA512";
+	    default:
+	      return "MBEDTLS_MD_???";
+	    }
+	}
+      };
+    }
+  }
 }
 
 #endif
